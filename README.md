@@ -131,18 +131,48 @@ Generated a customer-level business intelligence report including:
 SuperMart_Analytics_Project/
 │
 ├── dataset_creation.sql
-├── supermart_capstone_questions.pdf
 ├── queries.sql
+├── Questions.pdf
 ├── README.md
 │
 └── assets/
-    └── schema_diagram.png (optional)
+    ├── schema_diagram.png
+    ├── top_10_customers.png
+    ├── employee_sales_dashboard.png
+    ├── customer_lifetime_value.png
+    ├── monthly_revenue_2023.png
+    └── best_selling_products.png
 ```
+## Database Schema
 
+![Database Schema](assets/schema_diagram.png)
+
+The database consists of seven interconnected tables:
+regions, categories, employees, customers, products, orders, and order_items.
+---
+----
+
+
+## Sample Query Outputs
+
+### Top 5 Customers by Revenue
+
+![Top Customers](assets/top_5_customers.png)
+
+### Employee Sales Performance Dashboard
+
+![Employee Dashboard](assets/employee_sales_dashboard.png)
+
+### Customer Lifetime Value Report
+
+![Customer Lifetime Value](assets/customer_lifetime_value.png)
+
+### Monthly Revenue Analysis (2023)
+
+![Monthly Revenue](assets/monthly_revenue_2023.png)
 ---
 
 ## Tools Used
-
 * PostgreSQL
 * SQL
 * Git & GitHub
