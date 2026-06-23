@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project is a comprehensive SQL analytics case study built using PostgreSQL. The objective is to analyze sales, customers, employees, products, and business performance data for a fictional retail company, **SuperMart**.
+This project is a comprehensive SQL analytics case study built using PostgreSQL. The objective is to analyze sales, customers, employees, products, and business performance data for a retail company, **SuperMart**.
 
 The project demonstrates fundamental and intermediate SQL skills including:
 
