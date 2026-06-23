@@ -602,4 +602,210 @@ SELECT
     ROUND(total_revenue,2) AS total_revenue
 FROM yearly_revenue
 ORDER BY order_year;
+-- ==================================================
+-- SECTION I: Employee Sales Performance Report 
+-- ==================================================
+WITH order_revenue AS
+(
+SELECT o.order_id,
+    	o.employee_id,
+        SUM(
+            oi.quantity *
+            oi.unit_price *
+            (1 - oi.discount / 100.0)
+        ) AS order_total
+
+    FROM orders o
+    JOIN order_items oi
+         ON o.order_id = oi.order_id
+
+    WHERE o.status = 'Delivered'
+      AND o.order_date BETWEEN '2021-01-01'
+                          AND '2024-06-30'
+
+    GROUP BY
+        o.order_id,
+        o.employee_id
+),
+
+employee_sales AS
+(
+    SELECT
+        employee_id,
+
+        COUNT(order_id) AS total_delivered_orders,
+
+        SUM(order_total) AS total_revenue,
+
+        AVG(order_total) AS avg_order_value,
+
+        MAX(order_total) AS best_single_order
+
+    FROM order_revenue
+
+    GROUP BY employee_id
+)
+
+SELECT
+
+    CONCAT(e.first_name, ' ', e.last_name)
+        AS employee_name,
+
+    e.role,
+
+    r.region_name,
+
+    COALESCE(es.total_delivered_orders, 0)
+        AS total_delivered_orders,
+
+    ROUND(
+        COALESCE(es.total_revenue, 0),
+        2
+    ) AS total_revenue,
+
+    ROUND(
+        COALESCE(es.avg_order_value, 0),
+        2
+    ) AS avg_order_value,
+
+    ROUND(
+        COALESCE(es.best_single_order, 0),
+        2
+    ) AS best_single_order,
+
+    CASE
+        WHEN COALESCE(es.total_revenue,0) > 5000000
+             THEN 'Elite'
+
+        WHEN COALESCE(es.total_revenue,0)
+             BETWEEN 1000000 AND 5000000
+             THEN 'Strong'
+
+        WHEN COALESCE(es.total_revenue,0)
+             BETWEEN 100000 AND 999999
+             THEN 'Developing'
+
+        ELSE 'Inactive'
+    END AS performance_band
+
+FROM employees e
+
+JOIN regions r
+     ON e.region_id = r.region_id
+
+LEFT JOIN employee_sales es
+       ON e.employee_id = es.employee_id
+
+ORDER BY
+    total_revenue DESC,
+    employee_name ASC;
+-- ==================================================
+-- SECTION J: Customer Lifetime Value Report
+-- ==================================================
+WITH customer_metrics AS
+(
+    SELECT
+        c.customer_id,
+        CONCAT(c.first_name, ' ', c.last_name) AS customer_name,
+        c.city,
+        EXTRACT(YEAR FROM c.registration_date) AS registration_year,
+
+        COUNT(DISTINCT o.order_id) AS total_orders,
+
+        COUNT(DISTINCT CASE
+            WHEN o.status = 'Delivered'
+            THEN o.order_id
+        END) AS delivered_orders,
+
+        COUNT(DISTINCT CASE
+            WHEN o.status = 'Cancelled'
+            THEN o.order_id
+        END) AS cancelled_orders,
+
+        COALESCE(
+            SUM(
+                CASE
+                    WHEN o.status = 'Delivered'
+                    THEN oi.quantity
+                         * oi.unit_price
+                         * (1 - oi.discount / 100.0)
+                    ELSE 0
+                END
+            ),
+            0
+        ) AS lifetime_revenue
+
+    FROM customers c
+
+    LEFT JOIN orders o
+           ON c.customer_id = o.customer_id
+
+    LEFT JOIN order_items oi
+           ON o.order_id = oi.order_id
+
+    WHERE c.registration_date < '2024-01-01'
+
+    GROUP BY
+        c.customer_id,
+        customer_name,
+        c.city,
+        registration_year
+)
+
+SELECT
+
+    customer_name,
+
+    city,
+
+    registration_year,
+
+    total_orders,
+
+    delivered_orders,
+
+    cancelled_orders,
+
+    ROUND(lifetime_revenue, 2)
+        AS lifetime_revenue,
+
+    ROUND(
+        CASE
+            WHEN delivered_orders > 0
+            THEN lifetime_revenue / delivered_orders
+            ELSE 0
+        END,
+        2
+    ) AS avg_order_value,
+
+    CASE
+
+        WHEN lifetime_revenue > 500000
+             AND delivered_orders >= 5
+             THEN 'VIP'
+
+        WHEN (
+                lifetime_revenue BETWEEN 100000 AND 500000
+             )
+             OR (
+                delivered_orders BETWEEN 2 AND 4
+             )
+             THEN 'Loyal'
+
+        WHEN delivered_orders = 1
+             THEN 'One-Time Buyer'
+
+        WHEN delivered_orders = 0
+             AND total_orders >= 1
+             THEN 'No Conversions'
+
+        ELSE 'Inactive'
+
+    END AS customer_segment
+
+FROM customer_metrics
+
+ORDER BY
+    lifetime_revenue DESC,
+    customer_name ASC;
   
