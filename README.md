@@ -137,7 +137,7 @@ SuperMart_Analytics_Project/
 │
 └── assets/
     ├── schema_diagram.png
-    ├── top_10_customers.png
+    ├── top_5_customers.png
     ├── employee_sales_dashboard.png
     ├── customer_lifetime_value.png
     ├── monthly_revenue_2023.png
@@ -157,7 +157,7 @@ regions, categories, employees, customers, products, orders, and order_items.
 
 ### Top 5 Customers by Revenue
 
-![Top Customers](assets/top 5 customers.png)
+![Top Customers](assets/top 5 Customers.png)
 
 ### Employee Sales Performance Dashboard
 
