@@ -157,11 +157,11 @@ regions, categories, employees, customers, products, orders, and order_items.
 
 ### Top 5 Customers by Revenue
 
-![Top Customers](assets/top_5_customers.png)
+![Top Customers](assets/top 5 customers.png)
 
 ### Employee Sales Performance Dashboard
 
-![Employee Dashboard](assets/employee_sales_dashboard.png)
+![Employee Dashboard](assets/employees_sales_dashboard.png)
 
 ### Customer Lifetime Value Report
 
